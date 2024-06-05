@@ -6,13 +6,18 @@
 echo -e "Welcome to Bash for QIIME."
 
 echo -e "Please ensure that all sample files have been placed into the QIIME Input folder on the desktop: "
-sampleloc = /mnt/c/users/mjbea/onedrive/desktop/QIIME_Input
+sampleloc=/mnt/c/users/mjbea/onedrive/desktop/QIIME_Input
 
 for file in "$sampleloc"/*; do
   if [ -f "$file" ]; then
     echo "$file"
   fi
 done
+
+gcc test.c
+test=$(./a.out -n 1)
+echo -e "This is test: $test"
+
 
 # Need to prompt user for sample file names so that they may be renamed to the .fastq format
 

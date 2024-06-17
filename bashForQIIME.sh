@@ -1,7 +1,7 @@
 #!/bin/bash
 # Script to enable ease of use of QIIME2 pipeline
 # Written by Joshua Wells
-# Latest Update: 6/13/2024
+# Latest Update: 6/17/2024
 
 echo -e "Welcome to Bash for QIIME."
 
@@ -11,12 +11,25 @@ echo -e "Enter a name for the working directory for this project: "
 read dirname
 mkdir $dirname
 
-
 echo -e "Enter a prefix for all generated files for this project (Files will be named Prefix-description.qza/v): "
 read prefix
 
+echo -e "What classifier would you like to use? Enter '1' for GreenGenes515f806r, '2' for GreenGenesFullLength, or '3' for Silva138"
+read classifierchoice
 
-# insert path of your samples and metadata here
+if [ "$classifierchoice" == "1" ]; then
+  classifierchoice=/home/frank/bashForQIIME/Classifiers/GreenGenes515f806rClassifier.qza
+fi
+
+if [ "$classifierchoice" == "2" ]; then
+  classifierchoice=/home/frank/bashForQIIME/Classifiers/GreenGenesFullLengthClassifier.qza
+fi
+
+if [ "$classifierchoice" == "3" ]; then
+  classifierchoice=/home/frank/bashForQIIME/Classifiers/Silva138Classifier.qza
+fi
+
+# # insert path of your samples and metadata here
 sampleloc=/mnt/c/users/mjbea/onedrive/desktop/QIIME_Input/FASTQ_FILES
 metadataloc=/mnt/c/users/mjbea/onedrive/desktop/QIIME_Input/METADATA
 
@@ -88,15 +101,23 @@ qiime feature-table summarize \
   --o-visualization $prefix-table.qzv \
   --m-sample-metadata-file $prefix-metadata.tsv \
 
-# Grab sampling depth from -table.qzv
-cp $prefix-table.qza $prefix-table.zip
-mkdir table_vis
-mv $prefix-table.zip table_vis
-cd table_vis
-gunzip $prefix-table.zip
-cp sample-frequency-detail.csv /home/frank/bashForQIIME/$dirname
-sampling_depth=$(./a.out)
+cd $dirname
 
+# Convert qzv vis to a directory with files
+qiime tools export \
+  --input-path $prefix-table.qzv \
+  --output-path $prefix-table
+
+# Get into directory with csv file to be analyzed
+cd $prefix-table
+cp sample-frequency-detail.csv /home/frank/bashForQIIME
+cd
+cd /home/frank/bashForQIIME
+
+# Compile and run C program to get minimum sampling depth
+gcc samplingdepth.c
+sampling_depth=$(./a.out)
+cd $dirname
 
 qiime feature-table tabulate-seqs \
   --i-data $prefix-rep-seqs.qza \
@@ -121,3 +142,22 @@ qiime diversity core-metrics-phylogenetic \
   --m-metadata-file $prefix-metadata.tsv \
   --output-dir $prefix-core-metrics-results
 
+qiime feature-classifier classify-sklearn \
+  --i-classifier $classifierchoice \
+  --i-reads $prefix-rep-seqs.qza \
+  --o-classification $prefix-taxonomy.qza
+
+qiime metadata tabulate \
+  --m-input-file $prefix-taxonomy.qza \
+  --o-visualization $prefix-taxonomy.qzv
+
+qiime taxa barplot \
+  --i-table $prefix-table.qza \
+  --i-taxonomy $prefix-taxonomy.qza \
+  --m-metadata-file $prefix-metadata.tsv \
+  --o-visualization $prefix-taxa-bar-plots.qzv
+
+# Done!
+mv * /mnt/c/users/mjbea/onedrive/desktop/Output
+cd ..
+rm sample-frequency-detail.csv

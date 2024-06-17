@@ -9,39 +9,23 @@
 
 int main()
 {
-    char ogfile[107]; // original file being read
+    char ogfile[109]; // original file being read
+    char newfile[34];
+    int len = 0;
 
-    // was supposed to be final file, but something in the 
-    // string editing was messed up so i needed an extra string
-    char finalfile[58] = {'\0'}; 
-    
-    // extra string to finish renaming
-    char finalfinalfile[34] = {'\0'};
-    
     scanf("%s", ogfile); // read name of file
-
-    // remove leading characters up to "UCF"
-    for(int i = 48; i < 88; i++)
-    {
-        finalfile[i-48] = ogfile[i];
-    }
     
-    // get whatever number is next to R (either 1 or 2) in the file name
-    char rNum = ogfile[90];
-
-    // add on extra characters to the end accordingly
-    if(rNum == '1')
-        strcat(finalfile, "_L001_R1_001.fastq");
-    if(rNum == '2')
-        strcat(finalfile, "_L001_R2_001.fastq");
-
-    // trim off extra characters missed on first trim
-    for(int i = 24; i < 58; i++)
-    {
-        finalfinalfile[i-24] = finalfile[i];
+    for(int i = 84; i <= 99; i++) {
+        newfile[i-84] = ogfile[i];
     }
 
-    // send output to terminal
-    printf("%s", finalfinalfile);
+    strcat(newfile, "_L001_");
+    if(ogfile[102] == '1') strcat(newfile, "R1");
+    if(ogfile[102] == '2') strcat(newfile, "R2");
+
+    strcat(newfile, "_001.fastq");
+    len = strlen(newfile);
+
+    printf("%s", newfile);
     return 0;
 }

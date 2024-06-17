@@ -30,13 +30,13 @@ if [ "$classifierchoice" == "3" ]; then
 fi
 
 # # insert path of your samples and metadata here
-sampleloc=/mnt/c/users/mjbea/onedrive/desktop/QIIME_Input/FASTQ_FILES
-metadataloc=/mnt/c/users/mjbea/onedrive/desktop/QIIME_Input/METADATA
+sampleloc=#INSERT SAMPLE PATH HERE
+metadataloc=#INSERT METADATA PATH HERE
 
 # this copies over the metadata file from the QIIME_Input folder into the working directory
 for file in "$metadataloc"/*; do
   if [ -f "$file" ]; then
-    cp $file /home/frank/bashForQIIME/$dirname/$prefix-metadata.tsv
+    cp $file Your_Path/$dirname/$prefix-metadata.tsv
   fi
 done
 
@@ -45,7 +45,7 @@ gcc rename.c
 for file in "$sampleloc"/*; do
   if [ -f "$file" ]; then
     curfile=$(./a.out <<< $file -n 1)
-    cp $file /home/frank/bashForQIIME/$dirname/$curfile
+    cp $file Your_Path/$dirname/$curfile
   fi
 done
 
@@ -68,7 +68,7 @@ qiime demux summarize \
   --i-data $prefix-paired-demux.qza \
   --o-visualization $prefix-paired-demux.qzv
 
-mv $prefix-paired-demux.qzv /mnt/c/users/mjbea/onedrive/desktop/Output
+mv $prefix-paired-demux.qzv # INSERT OUTPUT PATH HERE
 
 # Take input for denoising parameters
 echo -e "Please take a moment to analyze the paired-demux visualization that was moved to the output folder on the desktop."
@@ -85,7 +85,6 @@ read trunc_len_f
 echo -e "Enter a value to be used for --p-trunc-len-r: "
 read trunc_len_r
 
-# Works!
 qiime dada2 denoise-paired \
   --i-demultiplexed-seqs $prefix-paired-demux.qza \
   --p-trim-left-f $trim_left_f \
@@ -110,9 +109,9 @@ qiime tools export \
 
 # Get into directory with csv file to be analyzed
 cd $prefix-table
-cp sample-frequency-detail.csv /home/frank/bashForQIIME
-cd
-cd /home/frank/bashForQIIME
+cp sample-frequency-detail.csv # INSERT PATH WHERE CSV FILE SHOULD BE PLACED (Should be same directory where samplingdepth.c is located)
+cd # Exit to root directory
+cd # Same path as where csv was moved to
 
 # Compile and run C program to get minimum sampling depth
 gcc samplingdepth.c
@@ -158,6 +157,6 @@ qiime taxa barplot \
   --o-visualization $prefix-taxa-bar-plots.qzv
 
 # Done!
-mv * /mnt/c/users/mjbea/onedrive/desktop/Output
+mv * #INSERT DESTINATION FOLDER PATH FOR OUTPUT HERE
 cd ..
 rm sample-frequency-detail.csv

@@ -18,15 +18,15 @@ echo -e "What classifier would you like to use? Enter '1' for GreenGenes515f806r
 read classifierchoice
 
 if [ "$classifierchoice" == "1" ]; then
-  classifierchoice=/home/frank/bashForQIIME/Classifiers/GreenGenes515f806rClassifier.qza
+  classifierchoice=#PATH_TO_PROGRAM_DIRECTORY/bashForQIIME/Classifiers/GreenGenes515f806rClassifier.qza
 fi
 
 if [ "$classifierchoice" == "2" ]; then
-  classifierchoice=/home/frank/bashForQIIME/Classifiers/GreenGenesFullLengthClassifier.qza
+  classifierchoice=#PATH_TO_PROGRAM_DIRECTORY/bashForQIIME/Classifiers/GreenGenesFullLengthClassifier.qza
 fi
 
 if [ "$classifierchoice" == "3" ]; then
-  classifierchoice=/home/frank/bashForQIIME/Classifiers/Silva138Classifier.qza
+  classifierchoice=#PATH_TO_PROGRAM_DIRECTORY/bashForQIIME/Classifiers/Silva138Classifier.qza
 fi
 
 # insert path of your samples and metadata here

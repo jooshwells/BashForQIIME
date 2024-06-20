@@ -4,24 +4,50 @@
 
 int main()
 {
-    FILE* fp = fopen("sample-frequency-detail.csv", "r");
+    FILE * fp;
+    fp = fopen("feature-table.tsv", "r");
 
-    double min = 100000000.0;
-    double dep = 0;
-    char line[50] = {'\0'};
-    char *curdep;
-    char *endptr;
+    char arr[300];
+    char* token;
+    char* endptr;
+    int cols=0;
+    fgets(arr, 300, fp);
+    fgets(arr, 300, fp);
 
-    while(fscanf(fp, "%s", line) != EOF) 
+    token = strtok(arr, "\t");
+    while(token != NULL)
     {
-        curdep = strtok(line, ","); // skip past the label token
+        token = strtok(NULL, "\t");
 
-        curdep = strtok(NULL, ","); // This is the sampling depth as a string
-        dep = strtod(curdep, &endptr);
-        if(dep < min) min = dep;
+        if(token != NULL)
+        {
+            if(strstr(token, "UCF") != NULL)
+            {
+                cols++;
+            }
+        }
     }
-    printf("%.0lf", min); // display min sampling depth
-    fclose(fp);
+    double frequencies[cols];
 
+    while(fgets(arr, 300, fp) != NULL)
+    {
+        token = strtok(arr, "\t");
+
+        for(int i = 0; i < cols; i++)
+        {
+            token = strtok(NULL, "\t");
+            frequencies[i] += strtod(token, &endptr);
+        }
+    }
+
+    double min = 10000000;
+
+    for(int i = 0; i < cols; i++)
+    {
+        if(frequencies[i] < min) min = frequencies[i];
+    }
+    printf("%.0lf", min);
+
+    fclose(fp);
     return 0;
 }

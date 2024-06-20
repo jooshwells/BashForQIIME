@@ -1,7 +1,7 @@
 #!/bin/bash
 # Script to enable ease of use of QIIME2 pipeline
 # Written by Joshua Wells
-# Latest Update: 6/17/2024
+# Latest Update: 6/20/2024
 
 echo -e "Welcome to Bash for QIIME."
 
@@ -9,7 +9,7 @@ echo -e "Please ensure that all fastq and metadata files have been placed in the
 
 echo -e "Enter a name for the working directory for this project: "
 read dirname
-mkdir $dirname
+mkdir $dirname 
 
 echo -e "Enter a prefix for all generated files for this project (Files will be named Prefix-description.qza/v): "
 read prefix
@@ -29,14 +29,14 @@ if [ "$classifierchoice" == "3" ]; then
   classifierchoice=/home/frank/bashForQIIME/Classifiers/Silva138Classifier.qza
 fi
 
-# # insert path of your samples and metadata here
-sampleloc=#INSERT SAMPLE PATH HERE
-metadataloc=#INSERT METADATA PATH HERE
+# insert path of your samples and metadata here
+sampleloc=/mnt/c/users/mjbea/onedrive/desktop/QIIME_Input/FASTQ_FILES
+metadataloc=/mnt/c/users/mjbea/onedrive/desktop/QIIME_Input/METADATA
 
 # this copies over the metadata file from the QIIME_Input folder into the working directory
 for file in "$metadataloc"/*; do
   if [ -f "$file" ]; then
-    cp $file Your_Path/$dirname/$prefix-metadata.tsv
+    cp $file /home/frank/bashForQIIME/$dirname/$prefix-metadata.tsv
   fi
 done
 
@@ -45,7 +45,7 @@ gcc rename.c
 for file in "$sampleloc"/*; do
   if [ -f "$file" ]; then
     curfile=$(./a.out <<< $file -n 1)
-    cp $file Your_Path/$dirname/$curfile
+    cp $file /home/frank/bashForQIIME/$dirname/$curfile
   fi
 done
 
@@ -68,7 +68,7 @@ qiime demux summarize \
   --i-data $prefix-paired-demux.qza \
   --o-visualization $prefix-paired-demux.qzv
 
-mv $prefix-paired-demux.qzv # INSERT OUTPUT PATH HERE
+mv $prefix-paired-demux.qzv /mnt/c/users/mjbea/onedrive/desktop/Output
 
 # Take input for denoising parameters
 echo -e "Please take a moment to analyze the paired-demux visualization that was moved to the output folder on the desktop."
@@ -102,16 +102,16 @@ qiime feature-table summarize \
 
 cd $dirname
 
-# Convert qzv vis to a directory with files
+# Convert qza into biom file
 qiime tools export \
-  --input-path $prefix-table.qzv \
+  --input-path $prefix-table.qza \
   --output-path $prefix-table
 
-# Get into directory with csv file to be analyzed
 cd $prefix-table
-cp sample-frequency-detail.csv # INSERT PATH WHERE CSV FILE SHOULD BE PLACED (Should be same directory where samplingdepth.c is located)
-cd # Exit to root directory
-cd # Same path as where csv was moved to
+biom convert -i feature-table.biom -o feature-table.tsv --to-tsv
+mv feature-table.tsv /home/frank/bashForQIIME
+cd ..
+cd ..
 
 # Compile and run C program to get minimum sampling depth
 gcc samplingdepth.c
@@ -157,6 +157,18 @@ qiime taxa barplot \
   --o-visualization $prefix-taxa-bar-plots.qzv
 
 # Done!
-mv * #INSERT DESTINATION FOLDER PATH FOR OUTPUT HERE
+cd datafolder
+mv * /mnt/c/users/mjbea/onedrive/desktop/Output
 cd ..
-rm sample-frequency-detail.csv
+rm -r datafolder
+
+cd $prefix-table
+mv * /mnt/c/users/mjbea/onedrive/desktop/Output
+cd ..
+rm -r $prefix-table
+
+mv * /mnt/c/users/mjbea/onedrive/desktop/Output
+cd ..
+rm feature-table.tsv
+
+rm -r $dirname

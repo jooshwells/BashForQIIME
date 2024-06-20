@@ -30,13 +30,13 @@ if [ "$classifierchoice" == "3" ]; then
 fi
 
 # insert path of your samples and metadata here
-sampleloc=/mnt/c/users/mjbea/onedrive/desktop/QIIME_Input/FASTQ_FILES
-metadataloc=/mnt/c/users/mjbea/onedrive/desktop/QIIME_Input/METADATA
+sampleloc=#YOUR PATH HERE
+metadataloc=#YOUR PATH HERE
 
 # this copies over the metadata file from the QIIME_Input folder into the working directory
 for file in "$metadataloc"/*; do
   if [ -f "$file" ]; then
-    cp $file /home/frank/bashForQIIME/$dirname/$prefix-metadata.tsv
+    cp $file #YOUR_PATH/$dirname/$prefix-metadata.tsv
   fi
 done
 
@@ -45,7 +45,7 @@ gcc rename.c
 for file in "$sampleloc"/*; do
   if [ -f "$file" ]; then
     curfile=$(./a.out <<< $file -n 1)
-    cp $file /home/frank/bashForQIIME/$dirname/$curfile
+    cp $file #YOUR_PATH/$dirname/$curfile
   fi
 done
 
@@ -68,7 +68,7 @@ qiime demux summarize \
   --i-data $prefix-paired-demux.qza \
   --o-visualization $prefix-paired-demux.qzv
 
-mv $prefix-paired-demux.qzv /mnt/c/users/mjbea/onedrive/desktop/Output
+mv $prefix-paired-demux.qzv #YOUR_OUTPUT_PATH
 
 # Take input for denoising parameters
 echo -e "Please take a moment to analyze the paired-demux visualization that was moved to the output folder on the desktop."
@@ -109,7 +109,7 @@ qiime tools export \
 
 cd $prefix-table
 biom convert -i feature-table.biom -o feature-table.tsv --to-tsv
-mv feature-table.tsv /home/frank/bashForQIIME
+mv feature-table.tsv #PROGRAM_HOME_DIRECTORY
 cd ..
 cd ..
 
@@ -158,16 +158,16 @@ qiime taxa barplot \
 
 # Done!
 cd datafolder
-mv * /mnt/c/users/mjbea/onedrive/desktop/Output
+mv * #YOUR_OUTPUT_PATH
 cd ..
 rm -r datafolder
 
 cd $prefix-table
-mv * /mnt/c/users/mjbea/onedrive/desktop/Output
+mv * #YOUR_OUTPUT_PATH
 cd ..
 rm -r $prefix-table
 
-mv * /mnt/c/users/mjbea/onedrive/desktop/Output
+mv * #YOUR_OUTPUT_PATH
 cd ..
 rm feature-table.tsv
 
